@@ -109,12 +109,12 @@ async def help(client: MickeyBot, m: Message):
 # -----------------------------
 # 🔗 Repo Command
 # -----------------------------
-@MickeyBot.on_cmd("repo")
-async def repo(_, m: Message):
-    await m.reply_text(
-        text=SOURCE_READ,
-        reply_markup=InlineKeyboardMarkup(CLOSE_BTN),
-        disable_web_page_preview=True,
+#@MickeyBot.on_cmd("repo")
+#async def repo(_, m: Message):
+   # await m.reply_text(
+     #   text=SOURCE_READ,
+      #  reply_markup=InlineKeyboardMarkup(CLOSE_BTN),
+       # disable_web_page_preview=True,
     )
 
 
