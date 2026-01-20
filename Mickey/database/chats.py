@@ -1,34 +1,46 @@
+# Mickey/database/chats.py
 from Mickey import db
 
-chatsdb = db.chatsdb
+# 🔹 Collections
+groups_col = db.groups   # Group info / economy settings
+config_col = db.config   # Global settings like economy lock
+
+# =========================================================
+# ✅ SERVED GROUPS HELPERS
+# =========================================================
+
+async def is_served_chat(chat_id: int) -> bool:
+    """
+    Check if a group/chat exists in DB
+    """
+    chat = await groups_col.find_one({"_id": chat_id})
+    return bool(chat)
 
 
 async def get_served_chats() -> list:
-    chats = chatsdb.find({"chat_id": {"$lt": 0}})
-    if not chats:
-        return []
+    """
+    Get all served groups/chats
+    """
     chats_list = []
-    for chat in await chats.to_list(length=1000000000):
+    async for chat in groups_col.find({"_id": {"$lt": 0}}):
         chats_list.append(chat)
     return chats_list
 
 
-async def is_served_chat(chat_id: int) -> bool:
-    chat = await chatsdb.find_one({"chat_id": chat_id})
-    if not chat:
-        return False
-    return True
-
-
-async def add_served_chat(chat_id: int):
-    is_served = await is_served_chat(chat_id)
-    if is_served:
+async def add_served_chat(chat_id: int, title: str = None):
+    """
+    Add a new chat/group to the database
+    """
+    if await is_served_chat(chat_id):
         return
-    return await chatsdb.insert_one({"chat_id": chat_id})
+    data = {"_id": chat_id, "name": title or "Unknown", "eco_disabled": False, "bonus_claimed": False}
+    await groups_col.insert_one(data)
 
 
 async def remove_served_chat(chat_id: int):
-    is_served = await is_served_chat(chat_id)
-    if not is_served:
+    """
+    Remove a chat/group from the database
+    """
+    if not await is_served_chat(chat_id):
         return
-    return await chatsdb.delete_one({"chat_id": chat_id})
+    await groups_col.delete_one({"_id": chat_id})
