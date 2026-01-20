@@ -32,8 +32,8 @@ DEV_OP = [
     ],
     [
         InlineKeyboardButton(
-            text="❄️ sᴏᴜʀᴄᴇ ❄️",
-            callback_data="SOURCE"
+            text="❄️ VIP NETWORK ❄️",
+            callback_data="VIP NETWORK"
         ),
         InlineKeyboardButton(
             text="☁️ ᴀʙᴏᴜᴛ ☁️",
