@@ -1,12 +1,11 @@
-FROM python:latest
+FROM python:3.10-slim
 
 RUN apt-get update -y && apt-get upgrade -y
-
 RUN pip3 install -U pip
 
-COPY . /app/
-WORKDIR /app/
+WORKDIR /app
+COPY . /app
+
 RUN pip3 install -U -r requirements.txt
 
-CMD python3 -m Mickey
-
+CMD python3 main.py
