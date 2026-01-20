@@ -47,16 +47,15 @@ async def start(_, m: Message):
         # Bot Intro Photo + Caption
         bot_intro = f"""
 🎉 **Welcome to {MickeyBot.name} - Your All-in-One Bot!** 🎉
-━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎮 Gaming | 💬 Chatting | 🎵 Music | 🥳 Fun
 💎 Earn coins, play games & chat with AI
 ✨ Enjoy stickers, memes, music & more!
-━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 <b>
 💌 Add me, baby, to your group!  
 ⚡ I’m active and ready to make your group fun!  
-🎮💰🎵🤖 Gaming, Economy, Music & AI Chat – All-in-One!  
-✨ Hit the buttons below to explore commands & have fun!</b>
+!</b>
 """
         await m.reply_photo(
             photo=random.choice(IMG),
