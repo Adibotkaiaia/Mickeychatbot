@@ -115,7 +115,7 @@ async def help(client: MickeyBot, m: Message):
      #   text=SOURCE_READ,
       #  reply_markup=InlineKeyboardMarkup(CLOSE_BTN),
        # disable_web_page_preview=True,
-    )
+    #)
 
 
 # -----------------------------
