@@ -1,22 +1,34 @@
-# Mickey/__init__.py
-
 from motor.motor_asyncio import AsyncIOMotorClient
-
 import config
 
 # =========================================================
 # 🔹 DATABASE CONNECTION
 # =========================================================
 client = AsyncIOMotorClient(config.MONGO_URL)
-db = client["VickDb"]
 
-# Collections
-users_col = db["users"]      # Users database
-groups_col = db["groups"]    # Groups database
-config_col = db["config"]    # Global settings
+# Main database (use ONE db everywhere)
+db = client["MickeyDB"]
 
 # =========================================================
-# 🔹 IMPORT ALL MODULE HELPERS
+# 🔹 COLLECTIONS (USED BY GAMING / ECONOMY)
 # =========================================================
-from .chats import *
-from .users import *
+users_col = db["users"]        # economy users
+groups_col = db["groups"]      # group settings
+config_col = db["config"]      # global config / locks
+
+# =========================================================
+# 🔹 OLD SUPPORT (for callback.py & legacy code)
+# =========================================================
+# Some old modules expect `vick`
+vick = db["vick"]
+
+# =========================================================
+# 🔹 EXPORTS
+# =========================================================
+__all__ = [
+    "db",
+    "users_col",
+    "groups_col",
+    "config_col",
+    "vick",
+]
