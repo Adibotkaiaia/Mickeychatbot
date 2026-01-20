@@ -1,35 +1,31 @@
+
 # economy.py
 from telebot import TeleBot, types
 from datetime import datetime, timedelta
 
-bot = TeleBot("8592517196:AAFZ0qNG5MLcy1iMRQadw-F8XpcLXIemZKI")  # <-- Replace with your bot token
+# ----------------------------
+# Bot Instance
+# ----------------------------
+bot = TeleBot("YOUR_BOT_TOKEN_HERE")  # <-- Replace with your bot token
 
 # ----------------------------
-# Users Database (In-Memory)
+# In-Memory Users Database
 # ----------------------------
-# For demo purposes; in production use a proper DB like SQLite or MongoDB
-users = {}
-
-# User Structure
-def get_user(user_id):
-    if user_id not in users:
-        users[user_id] = {
-            "balance": 0,
-            "premium": False,
-            "kills": 0,
-            "protection": None,
-            "daily_claim": None
-        }
-    return users[user_id]
+users = {}  # user_id: {balance, kills, premium, protection, daily_claim}
 
 # ----------------------------
 # Helper Functions
 # ----------------------------
-def is_protected(user_id):
-    user = get_user(user_id)
-    if user["protection"] and user["protection"] > datetime.now():
-        return True
-    return False
+def get_user(user_id):
+    if user_id not in users:
+        users[user_id] = {
+            "balance":0,
+            "kills":0,
+            "premium":False,
+            "protection":None,
+            "daily_claim":None
+        }
+    return users[user_id]
 
 def add_balance(user_id, amount):
     user = get_user(user_id)
@@ -42,6 +38,12 @@ def deduct_balance(user_id, amount):
         return True
     return False
 
+def is_protected(user_id):
+    user = get_user(user_id)
+    if user["protection"] and user["protection"] > datetime.now():
+        return True
+    return False
+
 # ----------------------------
 # Commands
 # ----------------------------
@@ -51,37 +53,30 @@ def deduct_balance(user_id, amount):
 def daily(message):
     user = get_user(message.from_user.id)
     now = datetime.now()
-
     reward = 2000 if user["premium"] else 1000
 
-    # Daily cooldown
     if user["daily_claim"] and now - user["daily_claim"] < timedelta(hours=24):
         remaining = timedelta(hours=24) - (now - user["daily_claim"])
-        bot.reply_to(message, f"Already claimed today! Try after {remaining}")
+        bot.reply_to(message, f"Already claimed! Try after {remaining}")
         return
 
     user["daily_claim"] = now
     add_balance(message.from_user.id, reward)
-    bot.reply_to(message, f"You received ${reward} as daily reward!")
+    bot.reply_to(message, f"You received ${reward} daily reward!")
 
 # /bal
 @bot.message_handler(commands=['bal'])
-def balance(message):
-    args = message.text.split()
-    if len(args) > 1 and args[1].startswith("@"):  # Check friend's balance
-        # In real bot, fetch user by username
-        bot.reply_to(message, "Friend balance feature coming soon!")
-    else:
-        user = get_user(message.from_user.id)
-        prefix = "💓" if user["premium"] else "👤"
-        bot.reply_to(message, f"{prefix} Your balance: ${user['balance']}")
+def bal(message):
+    user = get_user(message.from_user.id)
+    prefix = "💓" if user["premium"] else "👤"
+    bot.reply_to(message, f"{prefix} Your balance: ${user['balance']}")
 
-# /pay – become premium
+# /pay - become premium
 @bot.message_handler(commands=['pay'])
 def pay(message):
     user = get_user(message.from_user.id)
     if user["premium"]:
-        bot.reply_to(message, "You are already premium! 💓")
+        bot.reply_to(message, "Already premium 💓")
     else:
         cost = 5000
         if deduct_balance(message.from_user.id, cost):
@@ -131,9 +126,9 @@ def protect(message):
     if len(args) < 2:
         bot.reply_to(message, "Usage: /protect <1d|2d|3d>")
         return
-    duration_map = {"1d": 1, "2d": 2, "3d": 3}
+    duration_map = {"1d":1, "2d":2, "3d":3}
     if args[1] not in duration_map:
-        bot.reply_to(message, "Invalid duration! Choose 1d, 2d or 3d")
+        bot.reply_to(message, "Invalid duration! Choose 1d, 2d, 3d")
         return
     cost = 500 * duration_map[args[1]]
     if deduct_balance(message.from_user.id, cost):
@@ -146,9 +141,8 @@ def protect(message):
 @bot.message_handler(commands=['rob'])
 def rob(message):
     if not message.reply_to_message:
-        bot.reply_to(message, "Reply to someone to rob them!")
+        bot.reply_to(message, "Reply to a user to rob them!")
         return
-
     sender = get_user(message.from_user.id)
     target = get_user(message.reply_to_message.from_user.id)
 
@@ -173,7 +167,7 @@ def rob(message):
 @bot.message_handler(commands=['kill'])
 def kill(message):
     if not message.reply_to_message:
-        bot.reply_to(message, "Reply to someone to kill them!")
+        bot.reply_to(message, "Reply to a user to kill them!")
         return
     sender = get_user(message.from_user.id)
     reward = 400 if sender["premium"] else 200
@@ -224,3 +218,26 @@ def check(message):
         bot.reply_to(message, f"{message.reply_to_message.from_user.first_name} is protected until {target['protection']}")
     else:
         bot.reply_to(message, f"{message.reply_to_message.from_user.first_name} is NOT protected ❌")
+
+# ----------------------------
+# Optional Inline Menu (Buttons)
+# ----------------------------
+@bot.message_handler(commands=['menu'])
+def menu(message):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("Balance 💰", callback_data="bal"))
+    markup.add(types.InlineKeyboardButton("Daily 🗓️", callback_data="daily"))
+    markup.add(types.InlineKeyboardButton("Kill ⚔️", callback_data="kill"))
+    markup.add(types.InlineKeyboardButton("Rob 💵", callback_data="rob"))
+    bot.send_message(message.chat.id, "Choose option:", reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: True)
+def button_callback(call):
+    if call.data == "bal":
+        bal(call.message)
+    elif call.data == "daily":
+        daily(call.message)
+    elif call.data == "kill":
+        kill(call.message)
+    elif call.data == "rob":
+        rob(call.message)
