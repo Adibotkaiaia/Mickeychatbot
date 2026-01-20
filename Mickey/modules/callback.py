@@ -1,7 +1,6 @@
 # Don't remove This Line From Here. Tg: @Dev_Arora_0981 | @DevArora0981
 # Github :- Devarora-0981 | Devarora2604
 
-
 from pyrogram.enums import ChatMemberStatus as CMS
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup
 
@@ -18,7 +17,6 @@ from Mickey.modules.helpers import (
     HELP_BTN,
     HELP_READ,
     MUSIC_BACK_BTN,
-    SOURCE_READ,
     START,
     TOOLS_DATA_READ,
 )
@@ -39,12 +37,6 @@ async def cb_handler(_, query: CallbackQuery):
         await query.message.edit(
             text=START,
             reply_markup=InlineKeyboardMarkup(DEV_OP),
-        )
-    elif query.data == "SOURCE":
-        await query.message.edit(
-            text=SOURCE_READ,
-            reply_markup=InlineKeyboardMarkup(BACK),
-            disable_web_page_preview=True,
         )
     elif query.data == "ABOUT":
         await query.message.edit(
