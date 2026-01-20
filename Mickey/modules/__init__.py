@@ -1,8 +1,10 @@
 import glob
 from os.path import basename, dirname, isfile
 
-
 def __list_all_modules():
+    """
+    List all Python modules in this folder, excluding __init__.py
+    """
     mod_paths = glob.glob(dirname(__file__) + "/*.py")
 
     all_modules = [
@@ -11,8 +13,13 @@ def __list_all_modules():
         if isfile(f) and f.endswith(".py") and not f.endswith("__init__.py")
     ]
 
-    return all_modules
+    # Optional: always make sure ai_reply module loads last
+    if "ai_reply" in all_modules:
+        all_modules.remove("ai_reply")
+        all_modules.append("ai_reply")
+
+    return sorted(all_modules)
 
 
-ALL_MODULES = sorted(__list_all_modules())
+ALL_MODULES = __list_all_modules()
 __all__ = ALL_MODULES + ["ALL_MODULES"]
