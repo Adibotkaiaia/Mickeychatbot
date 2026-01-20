@@ -1,38 +1,45 @@
+import os
+import google.generativeai as genai
 from pyrogram import Client, filters
-import openai
-import config
-from Mickey import LOGGER
 
-# Set OpenAI API key
-openai.api_key = config.OPENAI_API_KEY
+# Load API key
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-@Client.on_message(filters.text & ~filters.bot)
-async def ai_reply(client, message):
-    """
-    AI reply handler for both private and group messages.
-    """
-    try:
-        # Optional: group me sirf bot mention pe reply
-        if message.chat.type in ["group", "supergroup"]:
-            if f"@{client.me.username}" not in message.text:
-                return  # ignore if bot not mentioned
+# Model select
+model = genai.GenerativeModel("gemini-pro")
 
-        # Call OpenAI API
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a funny, friendly Telegram chatbot who replies in Hinglish."},
-                {"role": "user", "content": message.text}
-            ],
-            temperature=0.8,
-            max_tokens=250
+# Enable / Disable users (optional)
+AI_ENABLED = set()
+
+@Client.on_message(filters.command("chatbot"))
+async def chatbot_toggle(_, m):
+    if len(m.command) < 2:
+        return await m.reply_text(
+            "**Usage:** /chatbot on | off"
         )
 
-        reply_text = response['choices'][0]['message']['content']
+    arg = m.command[1].lower()
+    uid = m.from_user.id
 
-        # Send AI reply
-        await message.reply_text(reply_text)
+    if arg == "on":
+        AI_ENABLED.add(uid)
+        await m.reply_text("🤖 AI Chatbot **Enabled**")
+    elif arg == "off":
+        AI_ENABLED.discard(uid)
+        await m.reply_text("🚫 AI Chatbot **Disabled**")
+    else:
+        await m.reply_text("Use: /chatbot on | off")
 
+
+@Client.on_message(filters.text & ~filters.command)
+async def ai_chat(_, m):
+    uid = m.from_user.id
+
+    if uid not in AI_ENABLED:
+        return
+
+    try:
+        response = model.generate_content(m.text)
+        await m.reply_text(response.text)
     except Exception as e:
-        LOGGER.warning(f"AI reply failed: {e}")
-        await message.reply_text("⚠️ AI reply failed, try again!")
+        await m.reply_text("❌ AI error, try again later")
