@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 # ----------------------------
 # Bot Instance
 # ----------------------------
-bot = TeleBot("YOUR_BOT_TOKEN_HERE")  # <-- Replace with your bot token
+bot = TeleBot("8592517196:AAFZ0qNG5MLcy1iMRQadw-F8XpcLXIemZKI")  # <-- Replace with your bot token
 
 # ----------------------------
 # In-Memory Users Database
