@@ -52,8 +52,11 @@ async def start(_, m: Message):
 💎 Earn coins, play games & chat with AI
 ✨ Enjoy stickers, memes, music & more!
 ━━━━━━━━━━━━━━
-**Usage:** /chatbot [ON/OFF]
-<b>Hit the buttons below for commands & help!</b>
+<b>
+💌 Add me, baby, to your group!  
+⚡ I’m active and ready to make your group fun!  
+🎮💰🎵🤖 Gaming, Economy, Music & AI Chat – All-in-One!  
+✨ Hit the buttons below to explore commands & have fun!</b>
 """
         await m.reply_photo(
             photo=random.choice(IMG),
