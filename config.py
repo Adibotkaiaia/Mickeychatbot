@@ -16,7 +16,7 @@ OPENAI_API_KEY = getenv("OPENAI_API_KEY", None)
 # === OWNER & ADMINS ===
 # ==========================
 OWNER_ID = int(getenv("OWNER_ID", None ))  # <-- apna Telegram ID
-OWNER_USERNAME = getenv("OWNER_USERNAME", "I_ADI_I")
+OWNER_USERNAME = getenv("OWNER_USERNAME", "https://t.me/I_ADI_I")
 
 # List of additional admins (Telegram IDs)
 ADMIN_IDS = [8400280060]  # <-- apne team/admin IDs yahan dal sakte ho
