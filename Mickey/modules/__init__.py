@@ -19,6 +19,6 @@ __all__ = ALL_MODULES + ["ALL_MODULES"]
 # ----------------------------
 # Start Bot Polling
 # ----------------------------
-from economy import bot  # Import bot instance
+from .economy import bot  # Import bot instance
 print("Bot is running...")
 bot.infinity_polling()
