@@ -15,7 +15,7 @@ OPENAI_API_KEY = getenv("OPENAI_API_KEY", None)
 # ==========================
 # === OWNER & ADMINS ===
 # ==========================
-OWNER_ID = int(getenv("OWNER_ID", 8400280060))  # <-- apna Telegram ID
+#OWNER_ID = int(getenv("OWNER_ID", 8400280060))  # <-- apna Telegram ID
 OWNER_USERNAME = getenv("OWNER_USERNAME", "I_ADI_I")
 
 # List of additional admins (Telegram IDs)
@@ -39,7 +39,7 @@ REVIVE_SECONDS = 3600      # Time before a dead user can revive (1 hour)
 IMG = [
     "https://te.legra.ph/file/5bf629d10afd4af953585.jpg",
     "https://te.legra.ph/file/7a321b99fe99d9d8b5117.jpg",
-    "https://te.legra.ph/file/c482a7e55b459ffe07502.jpg",
+    #"https://te.legra.ph/file/c482a7e55b459ffe07502.jpg",
 ]
 
 # ==========================
