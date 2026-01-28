@@ -1,4 +1,5 @@
 import os
+import asyncio
 import google.generativeai as genai
 from pyrogram import Client, filters
 
@@ -27,7 +28,8 @@ async def gemini_reply(_, m):
         return
 
     try:
-        r = model.generate_content(m.text)
+        # ✅ Run blocking Gemini call in background thread
+        r = await asyncio.to_thread(model.generate_content, m.text)
         await m.reply_text(r.text)
     except Exception as e:
         await m.reply_text("❌ AI Error")
