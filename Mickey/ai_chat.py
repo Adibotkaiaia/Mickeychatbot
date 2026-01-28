@@ -18,9 +18,9 @@ async def ai_chat_handler(client, message):
         return
 
     try:
-        reply = get_ai_reply(message.text)
+        reply = await get_ai_reply(message.text)   # 👈 FIX HERE
         await message.reply_text(reply)
-    except Exception:
+    except Exception as e:
         await message.reply_text(
             "Abe ruk 🤯 dimag thoda hang ho gaya"
         )
