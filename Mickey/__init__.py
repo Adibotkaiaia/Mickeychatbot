@@ -1,14 +1,21 @@
+import asyncio
 import logging
 import time
-import os
 
-from Abg import patch
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient as MongoCli
 from pyrogram import Client
 from pyrogram.enums import ParseMode
-from dotenv import load_dotenv
 
 import config
+
+# ---- FIX asyncio loop BEFORE Abg / pyrogram sync ----
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
+from Abg import patch  # noqa: E402
 
 # Load .env variables
 load_dotenv()
@@ -25,7 +32,7 @@ logging.basicConfig(
 )
 
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger(name)
 
 boot = time.time()
 
@@ -33,13 +40,12 @@ boot = time.time()
 mongo = MongoCli(config.MONGO_URL)
 db = mongo.Anonymous
 
-# Owner
 OWNER = config.OWNER_ID
 
 
 class MickeyBot(Client):
-    def __init__(self):
-        super().__init__(
+    def init(self):
+        super().init(
             name="MickeyBot",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
@@ -63,5 +69,5 @@ class MickeyBot(Client):
         LOGGER.info("Bot stopped")
 
 
-# Bot instance
-MickeyBot = MickeyBot()
+# Bot instance (DO NOT overwrite class name)
+app = MickeyBot()
