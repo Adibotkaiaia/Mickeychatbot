@@ -7,11 +7,10 @@ model = genai.GenerativeModel("gemini-pro")
 
 async def get_ai_reply(text):
     try:
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(
-            None,
-            lambda: model.generate_content(text)
+        response = await asyncio.to_thread(
+            model.generate_content,
+            text
         )
         return response.text
-    except Exception:
+    except Exception as e:
         return "⚠️ AI error, try again"
