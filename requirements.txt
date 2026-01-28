@@ -8,4 +8,3 @@ tgcrypto==1.2.2
 python-dotenv
 pyTelegramBotAPI==4.12.0
 google-generativeai
-python-3.10.13
