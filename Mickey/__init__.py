@@ -32,7 +32,7 @@ logging.basicConfig(
 )
 
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
-LOGGER = logging.getLogger(name)
+LOGGER = logging.getLogger("MickeyBot")
 
 boot = time.time()
 
